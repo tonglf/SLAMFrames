@@ -107,7 +107,7 @@
 - **输出：**
   - **pubLaserCloudFullRes**：全部点云
   - **pubLaserCloudCornerLast**：每个区域角点特征（20 个）× 6 个区域 × 线数
-  - **pubLaserCloudSurfLast**：每个区域角点特征（（全部点云 - 角点特征（20 个））/ 降采样）× 6 个区域 × 线数
+  - **pubLaserCloudSurfLast**：每个区域平面点特征（（全部点云 - 角点特征（20 个））/ 降采样）× 6 个区域 × 线数
   - **pubLaserOdometry**：odom 坐标系
   - **pubLaserPath**
 
@@ -116,7 +116,7 @@
 - **输入：**
   - **subLaserCloudFullRes**：全部点云
   - **subLaserCloudCornerLast**：每个区域角点特征（20 个）× 6 个区域 × 线数
-  - **subLaserCloudSurfLast**：每个区域角点特征（（全部点云 - 角点特征（20 个））/ 降采样）× 6 个区域 × 线数
+  - **subLaserCloudSurfLast**：每个区域平面点特征（（全部点云 - 角点特征（20 个））/ 降采样）× 6 个区域 × 线数
   - **subLaserOdometry**：odom 坐标系
 
 - **输出：**
