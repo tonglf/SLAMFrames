@@ -187,7 +187,7 @@ void laserCloudFullResHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloud
 	mBuf.unlock();
 }
 
-// receive odomtry		// 接收 odom 位姿信息
+// receive odomtry		// 接收 odom 位姿信息，将点云从 odom 转置 map 坐标系下并发布
 void laserOdometryHandler(const nav_msgs::Odometry::ConstPtr &laserOdometry)
 {
 	mBuf.lock();
@@ -300,7 +300,7 @@ void process()
 
 			TicToc t_whole;
 
-			transformAssociateToMap(); // 转换到 map 坐标系下
+			transformAssociateToMap(); // 转换到 map 坐标系下，获得 q_w_curr、t_w_curr
 
 			TicToc t_shift;
 			int centerCubeI = int((t_w_curr.x() + 25.0) / 50.0) + laserCloudCenWidth; // 计算当前帧在 3D 栅格特征地图中的位置，四舍五入
@@ -522,7 +522,7 @@ void process()
 				}
 			}
 
-			laserCloudCornerFromMap->clear(); // 把 corner 特征点全部加入 laserCloudCornerFromMap
+			laserCloudCornerFromMap->clear(); // 把附近 corner 特征点全部加入 laserCloudCornerFromMap
 			laserCloudSurfFromMap->clear();
 			for (int i = 0; i < laserCloudValidNum; i++)
 			{
@@ -531,7 +531,7 @@ void process()
 			}
 			int laserCloudCornerFromMapNum = laserCloudCornerFromMap->points.size();
 			int laserCloudSurfFromMapNum = laserCloudSurfFromMap->points.size();
-
+			// 特征点降采样
 			pcl::PointCloud<PointType>::Ptr laserCloudCornerStack(new pcl::PointCloud<PointType>());
 			downSizeFilterCorner.setInputCloud(laserCloudCornerLast);
 			downSizeFilterCorner.filter(*laserCloudCornerStack);
