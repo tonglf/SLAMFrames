@@ -910,7 +910,7 @@ public:
         po->z = z11;
         po->intensity = int(pi->intensity);
     }
-
+    // 插值IMU旋转
     void PluginIMURotation(float bcx, float bcy, float bcz, float blx, float bly, float blz, 
                            float alx, float aly, float alz, float &acx, float &acy, float &acz)
     {
@@ -1117,7 +1117,7 @@ public:
 
         for (int i = 0; i < surfPointsFlatNum; i++) {
 
-            TransformToStart(&surfPointsFlat->points[i], &pointSel);
+            TransformToStart(&surfPointsFlat->points[i], &pointSel);    // 转换到当前祯头部
 
             if (iterCount % 5 == 0) {
 
@@ -1189,7 +1189,7 @@ public:
                 tripod1 = laserCloudSurfLast->points[pointSearchSurfInd1[i]];
                 tripod2 = laserCloudSurfLast->points[pointSearchSurfInd2[i]];
                 tripod3 = laserCloudSurfLast->points[pointSearchSurfInd3[i]];
-
+                // [pa,pb,pc]是tripod1，tripod2，tripod3这3个点构成的一个平面的方向量
                 float pa = (tripod2.y - tripod1.y) * (tripod3.z - tripod1.z) 
                          - (tripod3.y - tripod1.y) * (tripod2.z - tripod1.z);
                 float pb = (tripod2.z - tripod1.z) * (tripod3.x - tripod1.x) 
@@ -1197,30 +1197,30 @@ public:
                 float pc = (tripod2.x - tripod1.x) * (tripod3.y - tripod1.y) 
                          - (tripod3.x - tripod1.x) * (tripod2.y - tripod1.y);
                 float pd = -(pa * tripod1.x + pb * tripod1.y + pc * tripod1.z);
-
+                // 模长，它是三角形面积的2倍
                 float ps = sqrt(pa * pa + pb * pb + pc * pc);
 
                 pa /= ps;
                 pb /= ps;
                 pc /= ps;
                 pd /= ps;
-
+                // 点到平面的距离，两个向量点乘，加pd原因:pointSel与tripod1构成的线段需要相减
                 float pd2 = pa * pointSel.x + pb * pointSel.y + pc * pointSel.z + pd;
 
-                float s = 1;
+                float s = 1;        // 影响因子
                 if (iterCount >= 5) {
                     s = 1 - 1.8 * fabs(pd2) / sqrt(sqrt(pointSel.x * pointSel.x
                             + pointSel.y * pointSel.y + pointSel.z * pointSel.z));
                 }
 
                 if (s > 0.1 && pd2 != 0) {
-                    coeff.x = s * pa;
+                    coeff.x = s * pa;               // [x,y,z]是整个平面的单位法量
                     coeff.y = s * pb;
                     coeff.z = s * pc;
-                    coeff.intensity = s * pd2;
+                    coeff.intensity = s * pd2;      // intensity是平面外一点到该平面的距离
 
-                    laserCloudOri->push_back(surfPointsFlat->points[i]);
-                    coeffSel->push_back(coeff);
+                    laserCloudOri->push_back(surfPointsFlat->points[i]);    // 未经变换的点放入laserCloudOri队列
+                    coeffSel->push_back(coeff);     // 距离，法向量值放入coeffSel
                 }
             }
         }
@@ -1256,7 +1256,7 @@ public:
 
         float c1 = -b6; float c2 = b5; float c3 = tx*b6 - ty*b5; float c4 = -crx*crz; float c5 = crx*srz; float c6 = ty*c5 + tx*-c4;
         float c7 = b2; float c8 = -b1; float c9 = tx*-b2 - ty*-b1;
-
+        // 构建雅可比矩阵，求解
         for (int i = 0; i < pointSelNum; i++) {
 
             pointOri = laserCloudOri->points[i];
