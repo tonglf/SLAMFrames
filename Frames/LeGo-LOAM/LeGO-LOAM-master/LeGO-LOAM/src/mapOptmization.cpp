@@ -541,7 +541,7 @@ public:
         tInY = tIn->y;
         tInZ = tIn->z;
     }
-
+    // 转换点云
     pcl::PointCloud<PointType>::Ptr transformPointCloud(pcl::PointCloud<PointType>::Ptr cloudIn){
 	// !!! DO NOT use pcl for point cloud transformation, results are not accurate
         // Reason: unkown
