@@ -170,12 +170,12 @@ private:
     bool newLaserCloudOutlierLast;
 
 
-    float transformLast[6];
-    float transformSum[6];
-    float transformIncre[6];
-    float transformTobeMapped[6];
-    float transformBefMapped[6];
-    float transformAftMapped[6];
+    float transformLast[6];             
+    float transformSum[6];              // odometry计算得到的到世界坐标系下的转移矩阵
+    float transformIncre[6];            // 转移增量，只使用了后三个平移增量
+    float transformTobeMapped[6];       // 以起始位置为原点的世界坐标系下的转换矩阵（猜测与调整的对象）
+    float transformBefMapped[6];        // 存放mapping之前的Odometry计算的世界坐标系的转换矩阵（注：低频量，不一定与transformSum一样）
+    float transformAftMapped[6];        // 存放mapping之后的经过mapping微调之后的转换矩阵
 
 
     int imuPointerFront;
@@ -372,7 +372,7 @@ public:
 
         latestFrameID = 0;
     }
-
+    // 将坐标转移到世界坐标系下,得到可用于建图的Lidar坐标，即修改了transformTobeMapped的值
     void transformAssociateToMap()
     {
         float x1 = cos(transformSum[1]) * (transformBefMapped[3] - transformSum[3]) 
@@ -1500,7 +1500,7 @@ public:
 
                 timeLastProcessing = timeLaserOdometry;
 
-                transformAssociateToMap();
+                transformAssociateToMap();          // 转换到Map坐标系下
 
                 extractSurroundingKeyFrames();
 
