@@ -16,6 +16,9 @@
 
 ##### MSKF
 
+- 论文：A Multi-State Constraint Kalman Filter for Vision-aided Inertial Navigation
+- GitHub：https://github.com/KumarRobotics/msckf_vio
+
 
 
 ##### ROVIO
